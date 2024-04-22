@@ -1,0 +1,11 @@
+// var fs = require('fs');
+// var os = require('os');
+// var n = require('./mynotes');
+// var _ = require('loadash');
+
+// var user = os.userInfo();
+
+
+// console.log(n.note);
+
+// fs.appendFile('greeting.txt','hello'+user.username,()=>console.log(user.uid));

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Include jQuery -->
+</head>
+<body>
+​
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="container mt-3">
+                    <h2>Demo Form</h2>
+                    <form id="myForm">
+                      <div class="mb-3 mt-3">
+                        <label for="username">Username</label>
+                        <input type="text" class="form-control" id="username" placeholder="Enter username" name="username">
+                      </div>
+                      <div class="mb-3 mt-3">
+                          <label for="id">Code Id</label>
+                          <input type="text" class="form-control" id="id" placeholder="Enter code id" name="id">
+                      </div>
+                      <div class="mb-3">
+                        <label for="role">Role:</label>
+                        <input type="text" class="form-control" id="role" placeholder="Enter role" name="role">
+                      </div>
+                      <button type="button" id="submitButton" class="btn btn-primary">Submit</button>
+                    </form>
+                  </div>
+                  
+                  <div class="container mt-3">
+                      <h2 class="text-center mb-2">Uers</h2>
+                      <table id="recordsTable" class="table table-bordered">
+                        <thead>
+                          <tr class="text-center">
+                            <th>S.no</th>
+                            <th>Username</th>
+                            <th>Role</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <!-- Records will be dynamically added here -->
+                        </tbody>
+                      </table>
+                  </div>
+            </div>
+        </div>
+    </div>
+</div>
+  
+  
+
+<script>
+$(document).ready(function(){
+    function fetchRecords() {
+          $.ajax({
+              type: "GET",
+              url: "http://127.0.0.1:3000/get-person", // Replace with your API endpoint to fetch records
+              success: function(response){
+                  // Clear existing table rows
+                  $('#recordsTable tbody').empty();
+  
+                  // Loop through each record and append to the table
+                  var id = 1;
+                  response.forEach(function(record) {
+                      var row = '<tr class="text-center">' +
+                          '<td>' + id + '</td>' +
+                          '<td>' + record.username + '</td>' +
+                          '<td>' + record.role + '</td>' +
+                          '</tr>';
+                      $('#recordsTable tbody').prepend(row);
+                      id++;
+                  });
+              },
+              error: function(xhr, status, error){
+                  console.log("Error fetching records:", error);
+              }
+          });
+      }
+  
+      // Call fetchRecords function initially to load records on page load
+      fetchRecords();
+    $("#submitButton").click(function(){
+        // Create an object to store form data
+        var formData = {
+            username: $("#username").val(),
+            id: $("#id").val(),
+            role: $("#role").val()
+        };
+
+        // Convert form data to JSON
+        var jsonData = JSON.stringify(formData);
+
+        // Send JSON data using AJAX
+        $.ajax({
+            type: "POST",
+            url: "http://127.0.0.1:3000/save-person",
+            data: jsonData,
+            contentType: "application/json",
+            success: function(response){
+                // Handle success response here
+                console.log("Success:", response);
+                fetchRecords();
+            },
+            error: function(xhr, status, error){
+                // Handle error here
+                console.log("Error:", error);
+            }
+        });
+    });
+});
+</script>
+
+</body>
+</html>
